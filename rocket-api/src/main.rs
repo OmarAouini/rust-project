@@ -20,10 +20,10 @@ fn world() -> &'static str {
     "Hello, world!"
 }
 
-#[post("/count", format= "json", data="<company>")]
+#[post("/count", data="<company>")]
 fn add(pool: &State<core::sqlx::MySqlPool>, company: Json<core::company::Company>) -> ApiResponse {
     use core::traits::Crud;
-    let mut codod = company.0;
+    let mut codod = company.into_inner();
     codod.email = "test".to_string();
     ApiResponse{ json: json!(codod), status: Status::Created}
 }
