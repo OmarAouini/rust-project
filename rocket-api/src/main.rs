@@ -4,10 +4,16 @@
 //! 20/02/2022
 //!
 
+mod apiresponse;
+
 #[macro_use] extern crate rocket;
 
+use rocket::http::Status;
+use rocket::response::status;
+use rocket::serde::json::serde_json::json;
+use rocket::{serde, State};
 use rocket::serde::json::Json;
-use rocket::State;
+use crate::apiresponse::ApiResponse;
 
 #[get("/")]
 fn world() -> &'static str {
@@ -15,14 +21,15 @@ fn world() -> &'static str {
 }
 
 #[post("/count", format= "json", data="<company>")]
-fn add(pool: &State<core::sqlx::MySqlPool>,company: Json<core::company::Company>) -> Json<String> {
+fn add(pool: &State<core::sqlx::MySqlPool>, company: Json<core::company::Company>) -> ApiResponse {
     use core::traits::Crud;
-    println!("OGGETTO IN INPUT: {:#?}", company);
-    Json("OK".to_string())
+    let mut codod = company.0;
+    codod.email = "test".to_string();
+    ApiResponse{ json: json!(codod), status: Status::Created}
 }
 
 #[get("/count")]
-fn count(pool: &State<core::sqlx::MySqlPool>) -> Json<core::company::Company> {
+fn count(pool: &State<core::sqlx::MySqlPool>) -> ApiResponse {
     use core::traits::Crud;
     let all = core::company::Company::findAll(&pool).unwrap();
     format!("Number of visits: {:?}", all);
@@ -35,7 +42,7 @@ fn count(pool: &State<core::sqlx::MySqlPool>) -> Json<core::company::Company> {
         phone_number: "".to_string(),
         projects: vec![]
     };
-    Json(comp)
+    ApiResponse{status: Status::Ok, json: json!(comp)}
 }
 
 /// Adds one to the number given.
