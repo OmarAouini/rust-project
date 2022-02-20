@@ -14,6 +14,13 @@ fn world() -> &'static str {
     "Hello, world!"
 }
 
+#[post("/count", format= "json", data="<company>")]
+fn add(pool: &State<core::sqlx::MySqlPool>,company: Json<core::company::Company>) -> Json<String> {
+    use core::traits::Crud;
+    println!("OGGETTO IN INPUT: {:#?}", company);
+    Json("OK".to_string())
+}
+
 #[get("/count")]
 fn count(pool: &State<core::sqlx::MySqlPool>) -> Json<core::company::Company> {
     use core::traits::Crud;
@@ -48,7 +55,7 @@ async fn main() {
 
     rocket::build()
         .manage(pool.clone())
-        .mount("/hello", routes![world, count])
+        .mount("/hello", routes![world, count, add])
         .launch()
         .await;
 }
