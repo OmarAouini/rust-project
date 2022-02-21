@@ -27,7 +27,8 @@ use crate::apiresponse::ApiResponse;
 #[rocket::main]
 async fn main() {
     //db
-    let mut pool : core::sqlx::MySqlPool = core::db::connect_db_pool().await;
+    let mut pool : core::sqlx::MySqlPool =
+        core::db::connect_db_pool("mysql://root:root@localhost/mysite", 1, 5).await;
 
     rocket::build()
         .manage(pool)
