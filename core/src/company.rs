@@ -6,6 +6,7 @@
 //! 20/02/2022
 //!
 
+use log::debug;
 use serde::{Serialize, Deserialize};
 use sqlx::MySqlPool;
 use crate::traits::Crud;
@@ -23,7 +24,7 @@ pub struct Company {
 
 impl Crud<Company, MySqlPool> for Company {
     fn find(pool: &MySqlPool, id: &i32) -> Result<Company, String> {
-        println!("FOUND WITH ID {:?}", id);
+        debug!("SEARCH WITH ID {:?}", id);
         Ok(Company{
             id: *id,
             name: "paolino".to_string(),
@@ -36,22 +37,23 @@ impl Crud<Company, MySqlPool> for Company {
     }
 
     fn find_all(pool: &MySqlPool) -> Result<Vec<Company>, String> {
-        println!("TUTTI");
+        debug!("FIND ALL");
         Ok(vec![])
     }
 
     fn add(pool: &MySqlPool, elem: &Company) -> Result<bool, String> {
-        println!("ARRIVATO COMPANY: {:#?}", elem);
+        debug!("ADD COMPANY: {:#?}", elem);
         return Err("errore nell'add".to_string())
     }
 
     fn delete(pool: &MySqlPool, id: &i32) -> Result<bool, String> {
-        println!("DELETED WITH ID {:?}", id);
+        debug!("DELETE WITH ID {:?}", id);
         return Ok(true)
     }
 
     fn update(pool: &MySqlPool, elem: &Company) -> Result<bool, String> {
-        todo!()
+        debug!("UPDATE COMPANY: {:#?}", elem);
+        return Err("errore nell'update".to_string())
     }
 }
 
