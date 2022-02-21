@@ -3,28 +3,45 @@ use rocket::serde::json::Json;
 use rocket::serde::json::serde_json::json;
 use rocket::State;
 use crate::ApiResponse;
+use crate::apiresponse::ErrorJson;
+use core::traits::Crud;
 
-#[post("/count", data="<company>")]
-pub fn add(pool: &State<core::sqlx::MySqlPool>, company: Json<core::company::Company>) -> ApiResponse {
-    let mut codod = company.into_inner();
-    codod.email = "test".to_string();
-    ApiResponse{ json: json!(codod), status: Status::Created}
+#[get("/")]
+pub fn all(pool: &State<core::sqlx::MySqlPool>) -> ApiResponse {
+    match core::company::Company::find_all(pool.inner()) {
+        Ok(v) => ApiResponse{ json: json!(v), status: Status::Ok},
+        Err(err) => ApiResponse{ json: json!(ErrorJson{message: err}), status: Status::InternalServerError}
+    }
 }
 
-#[get("/count")]
-pub fn count(pool: &State<core::sqlx::MySqlPool>) -> ApiResponse {
-    use core::traits::Crud;
+#[get("/<id>")]
+pub fn find(pool: &State<core::sqlx::MySqlPool>, id :i32) -> ApiResponse {
+    match core::company::Company::find(pool.inner(), &id) {
+        Ok(v) => ApiResponse{ json: json!(v), status: Status::Ok},
+        Err(err) => ApiResponse{ json: json!(ErrorJson{message: err}), status: Status::InternalServerError}
+    }
+}
 
-    let all = core::company::Company::find_all(&pool).unwrap();
-    format!("Number of visits: {:?}", all);
-    let comp = core::company::Company{
-        id: 0,
-        name: "".to_string(),
-        vat_code: "".to_string(),
-        address: "".to_string(),
-        email: "".to_string(),
-        phone_number: "".to_string(),
-        projects: vec![]
-    };
-    ApiResponse{status: Status::Ok, json: json!(comp)}
+#[post("/", data="<company>")]
+pub fn add(pool: &State<core::sqlx::MySqlPool>, company: Json<core::company::Company>) -> ApiResponse {
+    match core::company::Company::add(pool.inner(), &company.into_inner()) {
+        Ok(v) => ApiResponse{ json: json!(v), status: Status::Created},
+        Err(err) => ApiResponse{ json: json!(ErrorJson{message: err}), status: Status::InternalServerError}
+    }
+}
+
+#[put("/", data="<company>")]
+pub fn update(pool: &State<core::sqlx::MySqlPool>, company: Json<core::company::Company>) -> ApiResponse {
+    match core::company::Company::update(pool.inner(), &company.into_inner()) {
+        Ok(v) => ApiResponse{ json: json!(v), status: Status::Ok},
+        Err(err) => ApiResponse{ json: json!(ErrorJson{message: err}), status: Status::InternalServerError}
+    }
+}
+
+#[delete("/<id>")]
+pub fn delete(pool: &State<core::sqlx::MySqlPool>, id :i32) -> ApiResponse {
+    match core::company::Company::delete(pool.inner(), &id) {
+        Ok(v) => ApiResponse{ json: json!(v), status: Status::Ok},
+        Err(err) => ApiResponse{ json: json!(ErrorJson{message: err}), status: Status::InternalServerError}
+    }
 }

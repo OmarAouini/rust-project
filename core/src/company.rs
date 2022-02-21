@@ -23,10 +23,10 @@ pub struct Company {
 
 impl Crud<Company, MySqlPool> for Company {
     fn find(pool: &MySqlPool, id: &i32) -> Result<Company, String> {
-        println!("{}", "salvato");
+        println!("FOUND WITH ID {:?}", id);
         Ok(Company{
-            id: 0,
-            name: "".to_string(),
+            id: *id,
+            name: "paolino".to_string(),
             vat_code: "".to_string(),
             address: "".to_string(),
             email: "".to_string(),
@@ -41,11 +41,13 @@ impl Crud<Company, MySqlPool> for Company {
     }
 
     fn add(pool: &MySqlPool, elem: &Company) -> Result<bool, String> {
-        todo!()
+        println!("ARRIVATO COMPANY: {:#?}", elem);
+        return Err("errore nell'add".to_string())
     }
 
     fn delete(pool: &MySqlPool, id: &i32) -> Result<bool, String> {
-        todo!()
+        println!("DELETED WITH ID {:?}", id);
+        return Ok(true)
     }
 
     fn update(pool: &MySqlPool, elem: &Company) -> Result<bool, String> {

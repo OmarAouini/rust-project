@@ -9,16 +9,10 @@ mod api;
 
 #[macro_use] extern crate rocket;
 
-use rocket::http::Status;
 use rocket::serde::json::serde_json::json;
 use rocket::{Config, State};
 use rocket::serde::json::Json;
 use crate::apiresponse::ApiResponse;
-
-#[get("/health")]
-fn health() -> Status {
-    Status::Ok
-}
 
 /// Adds one to the number given.
 ///
@@ -37,10 +31,14 @@ async fn main() {
 
     rocket::build()
         .manage(pool)
-        .mount("/",
-               routes![health])
+        .mount("/", routes![api::health])
         .mount("/companies",
-               routes![api::company::add,api::company::count,])
+               routes![
+                   api::company::add,
+                   api::company::all,
+                   api::company::find,
+                   api::company::update,
+                   api::company::delete])
         .mount("/employees", routes![])
         .launch()
         .await;
