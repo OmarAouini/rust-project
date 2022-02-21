@@ -6,11 +6,8 @@
 //! 20/02/2022
 //!
 
-use std::fmt;
-use std::fmt::Formatter;
 use serde::{Serialize, Deserialize};
 use sqlx::MySqlPool;
-use crate::db::connect_db_pool;
 use crate::traits::Crud;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -38,7 +35,7 @@ impl Crud<Company, MySqlPool> for Company {
         })
     }
 
-    fn findAll(pool: &MySqlPool) -> Result<Vec<Company>, String> {
+    fn find_all(pool: &MySqlPool) -> Result<Vec<Company>, String> {
         println!("TUTTI");
         Ok(vec![])
     }
@@ -62,6 +59,11 @@ mod tests {
 
     #[test]
     fn test_add() {
+        assert_eq!(1,1)
+    }
+
+    #[test]
+    fn test_find_all() {
         assert_eq!(1,1)
     }
 }

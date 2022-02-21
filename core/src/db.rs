@@ -6,7 +6,7 @@
 //! 20/02/2022
 //!
 
-use sqlx::{MySql, MySqlPool, Pool};
+use sqlx::MySqlPool;
 use sqlx::mysql::MySqlPoolOptions;
 
 /// Connect to a Mysql Connection pool
@@ -16,7 +16,7 @@ pub async fn connect_db_pool() -> MySqlPool {
         .max_connections(5)
         .connect("mysql://root:root@localhost/mysite").await;
     if let Err(err) = pool {
-        panic!("error connection to {:?}", "mysql://root:root@localhost/mysite")
+        panic!("error connection to {:?}, err: {:?}", "mysql://root:root@localhost/mysite", err)
     }
     return pool.unwrap()
 }

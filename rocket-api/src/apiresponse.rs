@@ -1,7 +1,7 @@
 use rocket::http::{ContentType, Status};
-use rocket::{Request, Response, response, serde};
+use rocket::{Request, Response, response};
 use rocket::response::Responder;
-use rocket::serde::json::{json, Json, Value};
+use rocket::serde::json::Value;
 
 #[derive(Debug)]
 pub struct ApiResponse {
