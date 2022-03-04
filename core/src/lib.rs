@@ -6,5 +6,5 @@
 
 pub mod company;
 pub mod db;
-pub mod traits;
 pub extern crate sqlx;
+extern crate core;

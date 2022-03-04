@@ -39,7 +39,8 @@ async fn main() {
                    api::company::all,
                    api::company::find,
                    api::company::update,
-                   api::company::delete])
+                   api::company::delete
+               ])
         .mount("/employees", routes![])
         .launch()
         .await;
