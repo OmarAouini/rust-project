@@ -9,7 +9,7 @@
 use std::fmt::{Display, Formatter};
 use log::debug;
 use serde::{Serialize, Deserialize};
-use sqlx::{Error, MySql, MySqlPool};
+use sqlx::{Error, MySql, MySqlPool, query_as};
 use sqlx::mysql::MySqlQueryResult;
 
 #[derive(Serialize, Deserialize, Debug, sqlx::FromRow)]
@@ -29,6 +29,19 @@ pub struct CreateCompanyDTO {
     pub address: String,
     pub email: String,
     pub phone_number: String
+}
+
+impl From<CreateCompanyDTO> for Company {
+    fn from(c: CreateCompanyDTO) -> Self {
+        Company{
+            id: 0,
+            name: c.name,
+            vat_code: c.vat_code,
+            address: c.address,
+            email: c.email,
+            phone_number: c.phone_number
+        }
+    }
 }
 
 impl Company {
