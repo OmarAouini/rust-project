@@ -24,7 +24,7 @@ pub async fn find(pool: &State<core::sqlx::MySqlPool>, id :i32) -> ApiResponse {
 #[post("/", data="<company>")]
 pub async fn add(pool: &State<core::sqlx::MySqlPool>, company: Json<core::company::CreateCompanyDTO>) -> ApiResponse {
     match core::company::Company::add(pool.inner(), &company.into_inner()).await {
-        Ok(v) => ApiResponse{ json: json!("OK"), status: Status::Created},
+        Ok(_v) => ApiResponse{ json: json!("OK"), status: Status::Created},
         Err(err) => ApiResponse{ json: json!(ErrorJson{message: err}), status: Status::InternalServerError}
     }
 }

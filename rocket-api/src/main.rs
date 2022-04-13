@@ -8,10 +8,6 @@ mod apiresponse;
 mod api;
 
 #[macro_use] extern crate rocket;
-
-use rocket::serde::json::serde_json::json;
-use rocket::{Config, State};
-use rocket::serde::json::Json;
 use crate::apiresponse::ApiResponse;
 
 /// Adds one to the number given.
@@ -27,7 +23,7 @@ use crate::apiresponse::ApiResponse;
 #[rocket::main]
 async fn main() {
     //db
-    let mut pool : core::sqlx::MySqlPool =
+    let pool : core::sqlx::MySqlPool =
         core::db::connect_db_pool("mysql://root:root@localhost/mysite", 1, 5).await;
 
     rocket::build()
@@ -42,6 +38,8 @@ async fn main() {
                    api::company::delete
                ])
         .mount("/employees", routes![])
+        .mount("/projects", routes![])
+        .mount("/tasks", routes![])
         .launch()
         .await;
 }

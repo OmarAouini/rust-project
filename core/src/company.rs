@@ -6,10 +6,8 @@
 //! 20/02/2022
 //!
 
-use std::fmt::{Display, Formatter};
-use log::debug;
 use serde::{Serialize, Deserialize};
-use sqlx::{Error, MySql, MySqlPool, query_as};
+use sqlx::{Error, MySqlPool};
 use sqlx::mysql::MySqlQueryResult;
 
 #[derive(Serialize, Deserialize, Debug, sqlx::FromRow)]
@@ -58,17 +56,27 @@ impl Company {
         res.map_err(|err| err.into_database_error().unwrap().to_string())
     }
     pub async fn add(pool: &MySqlPool, company : &CreateCompanyDTO) -> Result<MySqlQueryResult, String> {
-        let query = format!(
-            "INSERT INTO companies(name, vat_code, address, email, phone_number) VALUES ({:?}, {:?}, {:?}, {:?}, {:?})",
-            company.name, company.vat_code, company.address, company.email, company.phone_number);
-        let res = sqlx::query(&query).execute(pool).await;
+        let res =
+            sqlx::query(&"INSERT INTO companies(name, vat_code, address, email, phone_number) VALUES (?, ?, ?, ?, ?)")
+            .bind(&company.name)
+            .bind(&company.vat_code)
+            .bind(&company.address)
+            .bind(&company.email)
+            .bind(&company.phone_number)
+            .execute(pool).await;
         res.map_err(|err| err.into_database_error().unwrap().to_string())
     }
     pub async fn update(pool: &MySqlPool, company : &Company) -> Result<u64, String> {
-        let query = format!(
-            "UPDATE companies SET name = {:?}, vat_code = {:?}, address = {:?}, email = {:?}, phone_number = {:?} WHERE id = {:?}",
-            company.name, company.vat_code, company.address, company.email, company.phone_number, company.id);
-        let res = sqlx::query(&query).execute(pool).await;
+        let res =
+            sqlx::query(&"UPDATE companies SET name = ?, vat_code = ?, address = ?, email = ?, phone_number = ? WHERE id = ?")
+            .bind(   &company.name)
+            .bind(&company.vat_code)
+            .bind(&company.address)
+            .bind( &company.email)
+            .bind( &company.phone_number)
+            .bind( &company.id)
+            .execute(pool).await;
+
         res.map(|result| result.rows_affected()).map_err(|err| err.into_database_error().unwrap().to_string())
     }
     pub async fn delete(pool: &MySqlPool, id : &i32) -> Result<u64, String> {
